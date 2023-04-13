@@ -20,5 +20,3 @@ RUN cd /install && php manage.php deploy --setup /var/www/html \
     && rm -rf /install 
 
 CMD /usr/sbin/apachectl -D FOREGROUND
-
-
