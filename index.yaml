@@ -1,0 +1,18 @@
+apiVersion: v1
+entries:
+  osticket:
+  - apiVersion: v2
+    appVersion: 1.17.3
+    created: "2023-04-14T16:42:40.783815843Z"
+    dependencies:
+    - name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.7.1
+    description: The osTicket open source ticketing system packaged for Kubernetes.
+    digest: d8d47dcb4cb51d0310cf6bc5c35459c8c02e73d85d90a2c648f1766d85c9f92c
+    name: osticket
+    type: application
+    urls:
+    - https://github.com/mike-matera/osTicket-helm/releases/download/osticket-0.2.0/osticket-0.2.0.tgz
+    version: 0.2.0
+generated: "2023-04-14T16:42:40.783821343Z"
