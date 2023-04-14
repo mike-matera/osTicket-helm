@@ -20,6 +20,6 @@ RUN cd /install && php manage.php deploy --setup /var/www/html \
     && cp /var/www/html/include/ost-sampleconfig.php /var/www/html/include/container_config/ost-config.php \
     && chmod 0666 /var/www/html/include/container_config/ost-config.php \
     && ln -s /var/www/html/include/container_config/ost-config.php /var/www/html/include/ost-config.php \
-    && rm -rf /install 
+    && rm -rf /install /var/www/html/setup 
 
 CMD /usr/sbin/apachectl -D FOREGROUND
