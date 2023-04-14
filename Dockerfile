@@ -10,6 +10,9 @@ RUN cd /usr/bin \
     && curl -LO https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl \
     && chmod 0555 kubectl 
 
+# Configure Apache 
+COPY files/000-default.conf /etc/apache2/sites-available/000-default.conf
+
 RUN git clone -b v1.17.3 https://github.com/osTicket/osTicket.git install 
 RUN cd /install && php manage.php deploy --setup /var/www/html \
     && php manage.php deploy -v /var/www/html \

@@ -14,7 +14,7 @@ timezone: "America/Los_Angeles"
 replicaCount: 1
 
 image:
-  repository: ghcr.io/mike-matera/osticket
+  repository: ghcr.io/mike-matera/osticket-helm
   pullPolicy: Always
   #pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
