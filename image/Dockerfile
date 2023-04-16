@@ -3,7 +3,7 @@ FROM docker.io/ubuntu:22.04
 RUN apt update -y \
     && DEBIAN_FRONTEND=noninteractive apt install -y git apache2  php8.1 php8.1-mysql php-pear \
         php8.1-gd php8.1-imap php8.1-mbstring php8.1-intl php8.1-apcu curl mysql-client git \
-        php8.1-memcache php8.1-memcached \
+        php8.1-memcache php8.1-memcached php8.1-http \
     && rm /var/www/html/index.html 
 
 # Need kubectl to support the installer on Kubernetes.
