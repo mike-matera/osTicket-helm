@@ -93,6 +93,11 @@ tolerations: []
 affinity: {}
 
 mysql:
+  architecture: standalone
+  secondary:
+    replicaCount: 1
+    persistence:
+      enabled: false	
   auth:
     database: osticket
     username: ostuser

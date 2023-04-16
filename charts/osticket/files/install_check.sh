@@ -10,13 +10,13 @@ then
     sleep 2 
 
     # Wait for the MySQL instance to respond.
-    while ! mysql -h $OSTICKET_MYSQL_SERVICE_HOST -P $OSTICKET_MYSQL_SERVICE_PORT_MYSQL --password="$MYSQL_ROOT_PASSWORD"  -e "show databases" > /dev/null
+    while ! mysql -h $MYSQL_PRIMARY_HOST -P $MYSQL_PRIMARY_PORT --password="$MYSQL_ROOT_PASSWORD"  -e "show databases" > /dev/null
     do 
         echo "Waiting for MySQL"
         sleep 5
     done
 
-    if ! mysql -h $OSTICKET_MYSQL_SERVICE_HOST -P $OSTICKET_MYSQL_SERVICE_PORT_MYSQL --password="$MYSQL_ROOT_PASSWORD"  -e "select * from ${MYSQL_DB}.ost_user" > /dev/null 
+    if ! mysql -h $MYSQL_PRIMARY_HOST -P $MYSQL_PRIMARY_PORT --password="$MYSQL_ROOT_PASSWORD"  -e "select * from ${MYSQL_DB}.ost_user" > /dev/null 
     then
         echo "Starting installer."
         curl -c /tmp/cookies.txt -X POST \
@@ -35,10 +35,10 @@ then
             -F passwd="$OST_ADMIN_PASSWORD" \
             -F passwd2="$OST_ADMIN_PASSWORD" \
             -F prefix="ost_" \
-            -F dbhost="osticket-mysql" \
-            -F dbname="osticket" \
-            -F dbuser="ostuser" \
-            -F dbpass="ostpasswd" \
+            -F dbhost="$OST_MYSQL_HOST" \
+            -F dbname="$MYSQL_DB" \
+            -F dbuser="$MYSQL_USER" \
+            -F dbpass="$MYSQL_PASSWORD" \
             -F timezone="$OST_TIMEZONE" \
             http://localhost:80/setup/install.php
 
