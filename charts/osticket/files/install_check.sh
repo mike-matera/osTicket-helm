@@ -42,6 +42,16 @@ then
             -F timezone="$OST_TIMEZONE" \
             http://localhost:80/setup/install.php
 
+
+        cp /var/www/html/include/ost-config.php /tmp/ost-config.php
+        cat /tmp/ost-config.php \
+            | perl -pe "s/^.*define.*SESSION_BACKEND.*$/define\('SESSION_BACKEND', 'memcache');/;" \
+            > /var/www/html/include/ost-config.php
+        cp /var/www/html/include/ost-config.php /tmp/ost-config.php
+        cat /tmp/ost-config.php \
+            | perl -pe "s/^.*define.*MEMCACHE_SERVERS.*$/define\('MEMCACHE_SERVERS', '${OST_MEMCACHED_HOST}:${OST_MEMCACHED_PORT}');/;" \
+            > /var/www/html/include/ost-config.php
+
         echo "All done. Saving config."
 
         # Create or overwrite the saved config.
