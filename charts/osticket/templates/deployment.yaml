@@ -34,6 +34,8 @@ spec:
           volumeMounts:
             - name: installer-volume
               mountPath: /install
+            - name: config-volume
+              mountPath: /var/www/html/include/container_config
           command: ["/bin/sh"]
           args: ["/install/install_check.sh"]
           envFrom:
@@ -79,5 +81,5 @@ spec:
           configMap:
             name: {{ include "osticket.fullname" . }}-installer
         - name: config-volume
-          configMap:
-            name: {{ include "osticket.fullname" . }}
+          secret:
+            secretName: {{ include "osticket.fullname" . }}

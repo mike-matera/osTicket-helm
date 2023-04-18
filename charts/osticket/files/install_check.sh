@@ -2,8 +2,12 @@
 
 set -e
 
+rm /var/www/html/include/ost-config.php
+cp /var/www/html/include/container_config/ost-config.php /var/www/html/include/ost-config.php
+chmod 0666 /var/www/html/include/ost-config.php
+
 # Run the installer if the server config is not valid.
-if ! kubectl get cm ${RELEASE_NAME} -o  jsonpath='{.data}'| grep -q ost-config.php
+if kubectl get secret osticket -o jsonpath='{@.data.ost\-config\.php}' | base64 -d | grep -q CONFIG-SIRI
 then
 
     apachectl start || /bin/true
@@ -42,30 +46,20 @@ then
             -F timezone="$OST_TIMEZONE" \
             http://localhost:80/setup/install.php
 
-
-        cp /var/www/html/include/ost-config.php /tmp/ost-config.php
-        cat /tmp/ost-config.php \
-            | perl -pe "s/^.*define.*SESSION_BACKEND.*$/define\('SESSION_BACKEND', 'memcache');/;" \
-            > /var/www/html/include/ost-config.php
-        cp /var/www/html/include/ost-config.php /tmp/ost-config.php
-        cat /tmp/ost-config.php \
-            | perl -pe "s/^.*define.*MEMCACHE_SERVERS.*$/define\('MEMCACHE_SERVERS', '${OST_MEMCACHED_HOST}:${OST_MEMCACHED_PORT}');/;" \
-            > /var/www/html/include/ost-config.php
-
         echo "All done. Saving config."
 
         # Create or overwrite the saved config.
-        kubectl create configmap ${RELEASE_NAME}-installer-config --from-file=/var/www/html/include/ost-config.php -o yaml --dry-run=client \
+        kubectl create secret generic ${RELEASE_NAME}-installer-config --from-file=/var/www/html/include/ost-config.php -o yaml --dry-run=client \
             | kubectl apply -f -
 
     else
         # Restore the saved configuration to the file. 
         echo "Database already installed. Restoring saved configuration."
-        kubectl get cm ${RELEASE_NAME}-installer-config -o jsonpath='{@.data.ost-config\.php}' > /var/www/html/include/ost-config.php 
+        kubectl get secret ${RELEASE_NAME}-installer-config -o jsonpath='{@.data.ost\-config\.php}' | base64 -d > /var/www/html/include/ost-config.php 
     fi
 
     # Overwrite the existing configmap. This is the deployed configuration.
-    kubectl create configmap ${RELEASE_NAME} --from-file=/var/www/html/include/ost-config.php -o yaml --dry-run=client \
+    kubectl create secret generic ${RELEASE_NAME} --from-file=/var/www/html/include/ost-config.php -o yaml --dry-run=client \
         | kubectl apply -f -
 
 else

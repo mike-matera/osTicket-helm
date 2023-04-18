@@ -103,3 +103,6 @@ mysql:
     username: ostuser
     password: ostpasswd
     rootPassword: ostroot
+
+memcached:
+  enabled: false
