@@ -1,4 +1,4 @@
-FROM docker.io/ubuntu:22.04
+FROM docker.io/ubuntu:22.04 as base
 
 RUN apt update -y \
     && DEBIAN_FRONTEND=noninteractive apt install -y git apache2  php8.1 php8.1-mysql php-pear \
@@ -19,6 +19,8 @@ RUN ln -sfT /dev/stderr "/var/log/apache2/error.log" \
     && ln -sfT /dev/stdout "/var/log/apache2/access.log" \
     && ln -sfT /dev/stdout "/var/log/apache2/other_vhosts_access.log"; 
 
+FROM base as builder 
+
 RUN git clone -b v1.17.3 https://github.com/osTicket/osTicket.git install 
 RUN cd /install && php manage.php deploy --setup /var/www/html \
     && php manage.php deploy -v /var/www/html \
@@ -36,5 +38,9 @@ RUN cd /tmp \
           php -dphar.readonly=0 make.php build $plugin; \
           cp ${plugin}.phar /var/www/html/include/plugins; \
         done
+
+FROM base 
+
+COPY --from=builder /var/www/html /var/www/html 
 
 CMD /usr/sbin/apachectl -D FOREGROUND
