@@ -32,12 +32,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: installer-volume
-              mountPath: /install
+            - name: deployment-volume
+              mountPath: /deployment
             - name: config-volume
               mountPath: /var/www/html/include/container_config
           command: ["/bin/sh"]
-          args: ["/install/install_check.sh"]
+          args: ["/deployment/install.sh"]
           envFrom:
           - secretRef:
               name: {{ .Release.Name }}-installer
@@ -47,6 +47,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["/deployment/start.sh"]
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -64,6 +66,8 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /var/www/html/include/container_config
+            - name: deployment-volume
+              mountPath: /deployment
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -77,9 +81,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: installer-volume
+        - name: deployment-volume
           configMap:
-            name: {{ include "osticket.fullname" . }}-installer
+            name: {{ include "osticket.fullname" . }}-deployment
         - name: config-volume
           secret:
             secretName: {{ include "osticket.fullname" . }}
