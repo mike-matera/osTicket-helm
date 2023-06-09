@@ -3,6 +3,24 @@ entries:
   osticket:
   - apiVersion: v2
     appVersion: 1.17.3
+    created: "2023-06-09T15:55:32.109256894Z"
+    dependencies:
+    - name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.7.1
+    - condition: or (eq .Values.mysql.architecture "replication") .Values.memcached.enabled
+      name: memcached
+      repository: https://charts.bitnami.com/bitnami
+      version: 6.3.14
+    description: The osTicket open source ticketing system packaged for Kubernetes.
+    digest: f483a75d89c1f86697a095a61ec4b41df560e8ec0b72cd11bf6cc33b61ec147d
+    name: osticket
+    type: application
+    urls:
+    - https://github.com/mike-matera/osTicket-helm/releases/download/osticket-0.6.0/osticket-0.6.0.tgz
+    version: 0.6.0
+  - apiVersion: v2
+    appVersion: 1.17.3
     created: "2023-04-18T20:10:22.009314092Z"
     dependencies:
     - name: mysql
@@ -69,4 +87,4 @@ entries:
     urls:
     - https://github.com/mike-matera/osTicket-helm/releases/download/osticket-0.2.0/osticket-0.2.0.tgz
     version: 0.2.0
-generated: "2023-04-18T20:10:22.009331592Z"
+generated: "2023-06-09T15:55:32.109277994Z"
