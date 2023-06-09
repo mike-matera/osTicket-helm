@@ -7,7 +7,7 @@ cp /var/www/html/include/container_config/ost-config.php /var/www/html/include/o
 chmod 0666 /var/www/html/include/ost-config.php
 
 # Run the installer if the server config is not valid.
-if kubectl get secret osticket -o jsonpath='{@.data.ost\-config\.php}' | base64 -d | grep -q CONFIG-SIRI
+if kubectl get secret ${RELEASE_NAME} -o jsonpath='{@.data.ost\-config\.php}' | base64 -d | grep -q CONFIG-SIRI
 then
 
     apachectl start || /bin/true

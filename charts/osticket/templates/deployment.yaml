@@ -40,7 +40,7 @@ spec:
           args: ["/deployment/install.sh"]
           envFrom:
           - secretRef:
-              name: {{ .Release.Name }}-installer
+              name: {{ include "osticket.fullname" . }}-installer
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
