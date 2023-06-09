@@ -2,8 +2,10 @@
 
 To install this Helm chart run the command:
 
-```console 
-$ helm install my-osticket chart/ 
+```console
+$ helm repo add osticket https://mike-matera.github.io/osTicket-helm/
+$ helm repo update
+$ helm install my-osticket osticket/osticket
 ```
 
 ## Configuration Options 

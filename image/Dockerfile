@@ -1,27 +1,35 @@
-FROM docker.io/ubuntu:22.04 as base
+FROM docker.io/php:8.0-apache as base
 
 RUN apt update -y \
-    && DEBIAN_FRONTEND=noninteractive apt install -y git apache2  php8.1 php8.1-mysql php-pear \
-        php8.1-gd php8.1-imap php8.1-mbstring php8.1-intl php8.1-apcu curl mysql-client git \
-        php8.1-memcache php8.1-memcached php8.1-http php8.1-raphf php8.1-curl 7zip \
-    && rm /var/www/html/index.html 
+    && DEBIAN_FRONTEND=noninteractive apt install -y curl git
 
 # Need kubectl to support the installer on Kubernetes.
 RUN cd /usr/bin \
     && curl -LO https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl \
     && chmod 0555 kubectl 
 
-# Configure Apache 
-COPY files/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Force the logs to stdout/stderr 
 RUN ln -sfT /dev/stderr "/var/log/apache2/error.log" \
     && ln -sfT /dev/stdout "/var/log/apache2/access.log" \
     && ln -sfT /dev/stdout "/var/log/apache2/other_vhosts_access.log"; 
 
+# Install PHP extensions
+RUN DEBIAN_FRONTEND=noninteractive apt install -y \
+        zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libfreetype6-dev \
+		libjpeg62-turbo-dev libpng-dev libc-client2007e-dev libkrb5-dev libc-client-dev \
+        libkrb5-dev libicu-dev \
+    && docker-php-ext-configure mysqli \
+    && docker-php-ext-install -j$(nproc) mysqli \
+	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+	&& docker-php-ext-install -j$(nproc) gd \
+	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+	&& docker-php-ext-install -j$(nproc) imap \
+    && docker-php-ext-configure intl \
+	&& docker-php-ext-install -j$(nproc) intl
+
 FROM base as builder 
 
-RUN git clone -b v1.17.3 https://github.com/osTicket/osTicket.git install 
+RUN git clone --depth 1 -b v1.17.3 https://github.com/osTicket/osTicket.git /install 
 RUN cd /install && php manage.php deploy --setup /var/www/html \
     && php manage.php deploy -v /var/www/html \
     && mkdir /var/www/html/include/container_config \
@@ -42,5 +50,3 @@ RUN cd /tmp \
 FROM base 
 
 COPY --from=builder /var/www/html /var/www/html 
-
-CMD /usr/sbin/apachectl -D FOREGROUND
