@@ -1,7 +1,7 @@
 FROM docker.io/php:8.0-apache as base
 
 RUN apt update -y \
-    && DEBIAN_FRONTEND=noninteractive apt install -y curl git
+    && DEBIAN_FRONTEND=noninteractive apt install -y curl git default-mysql-client
 
 # Need kubectl to support the installer on Kubernetes.
 RUN cd /usr/bin \
