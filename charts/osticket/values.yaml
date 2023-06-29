@@ -15,10 +15,9 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/mike-matera/osticket-helm
-  pullPolicy: Always
-  #pullPolicy: IfNotPresent
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main"
+  tag: "0.7.1"
 
 imagePullSecrets: []
 nameOverride: ""
