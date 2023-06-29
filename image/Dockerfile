@@ -17,7 +17,7 @@ RUN ln -sfT /dev/stderr "/var/log/apache2/error.log" \
 RUN DEBIAN_FRONTEND=noninteractive apt install -y \
         zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libfreetype6-dev \
 		libjpeg62-turbo-dev libpng-dev libc-client2007e-dev libkrb5-dev libc-client-dev \
-        libkrb5-dev libicu-dev \
+        libkrb5-dev libicu-dev libmemcached-dev libssl-dev \
     && docker-php-ext-configure mysqli \
     && docker-php-ext-install -j$(nproc) mysqli \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -25,7 +25,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
 	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 	&& docker-php-ext-install -j$(nproc) imap \
     && docker-php-ext-configure intl \
-	&& docker-php-ext-install -j$(nproc) intl
+	&& docker-php-ext-install -j$(nproc) intl \
+	&& pecl install memcached-3.2.0 \
+	&& docker-php-ext-enable memcached
 
 FROM base as builder 
 
