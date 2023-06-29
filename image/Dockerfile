@@ -27,7 +27,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
     && docker-php-ext-configure intl \
 	&& docker-php-ext-install -j$(nproc) intl \
 	&& pecl install memcached-3.2.0 \
-	&& docker-php-ext-enable memcached
+	&& docker-php-ext-enable memcached \
+    && pecl install memcache-8.0 \
+    && docker-php-ext-enable memcache
 
 FROM base as builder 
 
