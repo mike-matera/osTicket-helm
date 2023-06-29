@@ -1,4 +1,4 @@
-FROM docker.io/php:8.0-apache as base
+FROM docker.io/php:8.2-apache as base
 
 RUN apt update -y \
     && DEBIAN_FRONTEND=noninteractive apt install -y curl git default-mysql-client
@@ -33,7 +33,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
 
 FROM base as builder 
 
-RUN git clone --depth 1 -b v1.17.3 https://github.com/osTicket/osTicket.git /install 
+# Use the default production configuration (this fixes https://github.com/osTicket/osTicket/issues/6574)
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && rm "$PHP_INI_DIR/php.ini-development"
+
+RUN git clone --depth 1 -b v1.18 https://github.com/osTicket/osTicket.git /install 
 RUN cd /install && php manage.php deploy --setup /var/www/html \
     && php manage.php deploy -v /var/www/html \
     && mkdir /var/www/html/include/container_config \
@@ -52,5 +55,8 @@ RUN cd /tmp \
         done
 
 FROM base 
+
+# Use the default production configuration 
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && rm "$PHP_INI_DIR/php.ini-development"
 
 COPY --from=builder /var/www/html /var/www/html 
